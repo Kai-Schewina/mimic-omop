@@ -63,6 +63,7 @@ Note: An account on the website is required, download all files. Further, you ne
 
 Import the vocabulary:
 Note: Encodings might be an issue. Make sure server-side encoding and client-side encoding is the same. In my case server_encoding was set to UTF8, while client encoding was WIN1252. To check that connect to your database and execute the two commands.
+Additionally, this step might take a few hours.
 
 ```bash
 psql -d "mimic" -U "postgres"
