@@ -20,65 +20,74 @@ cd ..
 cp CommonDataModel/PostgreSQL/*.txt omop/build-omop/postgresql/
 ```
 
-Modify the DDL a bit
-
-```bash
-sed -i 's/^CREATE TABLE \([a-z_]*\)/CREATE UNLOGGED TABLE \1/' "omop/build-omop/postgresql/OMOP CDM postgresql ddl.txt"
-```
+Modify the DDL a bit:
+Open up "omop/build-omop/postgresql/OMOP CDM postgresql ddl.txt" and replace all occurences of "CREATE TABLE" with "CREATE UNLOGGED TABLE".
 
 Define the PSQL connection parameters you would like to use.
+We assume the following schema, db and user names:
+schema: omop
+dbname: mimic
+user: postgres
+
+Build the schema:
 
 ```bash
-export OMOP_SCHEMA='omop'
-export OMOP='host=localhost dbname=postgres user=postgres options=--search_path='$OMOP_SCHEMA
-# or, e.g., export OMOP='dbname=mimic options=--search_path='$OMOP_SCHEMA
-```
-
-Build the schema (NOTE: at the moment uses a fixed schema name of `omop`, edit the script if you need to modify the schema name):
-
-```bash
-psql "$OMOP" -c "DROP SCHEMA IF EXISTS $OMOP_SCHEMA CASCADE;"
-psql "$OMOP" -c "CREATE SCHEMA $OMOP_SCHEMA;"
-psql "$OMOP" -f "omop/build-omop/postgresql/OMOP CDM postgresql ddl.txt"
+psql -d "mimic" -U "postgres" -c "DROP SCHEMA IF EXISTS omop CASCADE;"
+psql -d "mimic" -U "postgres" -c "CREATE SCHEMA omop;"
+psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql ddl.txt"
 ```
 
 We alter the character columns to `text`, as there is no performance degradation. This also adds ~4 columns to the NLP table:
 
 ```bash
-psql "$OMOP" -f "omop/build-omop/postgresql/mimic-omop-alter.sql"
+psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/mimic-omop-alter.sql"
 ```
 
 We add some comments to the data model:
 
 ```bash
-psql "$OMOP" -f "omop/build-omop/postgresql/omop_cdm_comments.sql"
+psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/omop_cdm_comments.sql"
 ```
-
-Symlink your vocabulary folder so that the `extras/athena` path symlinks to it, e.g.:
+Create a "data" and a "data/vocab" folder at the root of the cloned repository.
 
 ```bash
-ln -s /data/vocab/ extras/athena
+mkdir data\vocab
 ```
 
-Above my `/data/vocab/` folder contains `CONCEPT_ANCESTOR.csv`, `CONCEPT_CPT4.csv`, `CONCEPT.csv`, etc.
+Replace all occurences in "omop/build-omop/postgresql/omop_vocab_load.sql" of "extras/athena" with "data/vocab". 
 
-Note: you can download the vocabulary from here: https://www.ohdsi.org/analytic-tools/athena-standardized-vocabularies/
-Don't forget to run the java file to import CPT codes into the concept folder after you download the vocabulary.
+The "data/vocab" folder contains the vocabulary that can be downloaded from: https://athena.ohdsi.org/
+Note: An account on the website is required, download all files. Further, you need to execute the command thats described in the Readme.txt that comes with the vocabulary. For that to work you need an API-Key from https://uts.nlm.nih.gov/uts/, the account registration might take up to three days. Further, a JAVA Installation is required: https://www.java.com/de/download/manual.jsp
 
 Import the vocabulary:
+Note: Encodings might be an issue. Make sure server-side encoding and client-side encoding is the same. In my case server_encoding was set to UTF8, while client encoding was WIN1252. To check that connect to your database and execute the two commands.
 
 ```bash
-psql "$OMOP" -f "omop/build-omop/postgresql/omop_vocab_load.sql"
+psql -d "mimic" -U "postgres"
+SHOW server_encoding;
+SHOW client_encoding;
+```
+
+If client_encoding is equal to WIN1252, execute the following, else leave the psql console with Control + C and go to the import section:
+
+```bash
+SET client_encoding TO 'UTF8';
+```
+
+Then import the vocabulary:
+
+```bash
+psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/omop_vocab_load.sql"
 ```
 
 (Optional) Indexes may slow down importing of data - so you may want to only build these *after* running the full ETL.
 
 ```bash
-psql "$OMOP" -f "omop/build-omop/postgresql/OMOP CDM postgresql indexes.txt"
+psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql indexes.txt"
 ```
 
 (Optional, experimental) For a similar reason as above, you may want to run this after the full ETL. Note also that since the foreign keys were not used during the construction of the ETL, they may have been violated by the process.
 
 ```bash
-psql "$OMOP" -f "omop/build-omop/postgresql/OMOP CDM postgresql constraints.txt"
+psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql constraints.txt"
 ```
