@@ -89,9 +89,3 @@ psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/omop_vocab_load.sql
 ```bash
 psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql indexes.txt"
 ```
-
-(Optional, experimental) For a similar reason as above, you may want to run this after the full ETL. Note also that since the foreign keys were not used during the construction of the ETL, they may have been violated by the process.
-
-```bash
-psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql constraints.txt"
-```
