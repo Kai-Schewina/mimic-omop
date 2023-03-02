@@ -8,6 +8,8 @@ This README will assume the following:
 * The standard concepts from Athena have been downloaded and are available somewhere (including running the extra script to download CPT code definitions)
 * The R software library with remotes (`install.packages("remotes")`) and a GitHub package `remotes::install_github("r-dbi/RPostgres")`. Additionally, R and Rtools should be in the PATH environment variable (e.g., "C:\Program Files\R\R-4.2.2\bin" and "C:\rtools43\usr\bin").
 * The computer has an active internet connection (needed to clone certain repositories throughout the build)
+* Postgresql bin and lib should be in the PATH environment variable (e.g., "C:\Program Files\PostgreSQL\15\lib" and "C:\Program Files\PostgreSQL\15\bin").
+* Git should be installed and available in the PATH environment variable
 
 ## 0. Open up a terminal and define parameters
 
