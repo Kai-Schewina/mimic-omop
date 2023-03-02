@@ -83,9 +83,3 @@ Then import the vocabulary:
 ```bash
 psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/omop_vocab_load.sql"
 ```
-
-(Optional) Indexes may slow down importing of data - so you may want to only build these *after* running the full ETL.
-
-```bash
-psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql indexes.txt"
-```
