@@ -78,6 +78,8 @@ If client_encoding is equal to WIN1252, execute the following, else leave the ps
 SET client_encoding TO 'UTF8';
 ```
 
+Note: Maybe its sufficient if both encodings are the same, either UTF8 or WIN1252. Seems like a problem if they are not.
+
 Then import the vocabulary:
 
 ```bash
