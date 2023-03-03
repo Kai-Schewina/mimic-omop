@@ -78,14 +78,10 @@ If client_encoding is equal to WIN1252, execute the following, else leave the ps
 SET client_encoding TO 'UTF8';
 ```
 
+Note: Maybe its sufficient if both encodings are the same, either UTF8 or WIN1252. Seems like a problem if they are not.
+
 Then import the vocabulary:
 
 ```bash
 psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/omop_vocab_load.sql"
-```
-
-(Optional) Indexes may slow down importing of data - so you may want to only build these *after* running the full ETL.
-
-```bash
-psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql indexes.txt"
 ```
