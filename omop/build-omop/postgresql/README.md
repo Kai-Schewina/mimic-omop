@@ -34,6 +34,9 @@ Build the schema:
 ```bash
 psql -d "mimic" -U "postgres" -c "DROP SCHEMA IF EXISTS omop CASCADE;"
 psql -d "mimic" -U "postgres" -c "CREATE SCHEMA omop;"
+psql -d "mimic" -U "postgres"
+alter user postgres set search_path to 'omop'
+CTRL+C to exit
 psql -d "mimic" -U "postgres" -f "omop/build-omop/postgresql/OMOP CDM postgresql ddl.txt"
 ```
 
