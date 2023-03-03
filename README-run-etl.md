@@ -1,32 +1,21 @@
 # Running the ETL on PostgreSQL
 
-This README overviews running the MIMIC-OMOP ETL from the ground up on a PostgreSQL server. You will need an installation of PostgreSQL 9.6+ in order to run the ETL. You will also need MIMIC-III installed on this instance of postgres, see here for details: https://mimic.physionet.org/gettingstarted/dbsetup/
+This README overviews running the MIMIC-OMOP ETL from the ground up on a PostgreSQL server. You will need an installation of PostgreSQL 9.6+ in order to run the ETL. You will also need MIMIC-III installed on this instance of postgres, see here for details: (https://mimic.mit.edu/docs/gettingstarted/local/install-mimic-locally-windows/)
 
 This README will assume the following:
 
 * MIMIC-III v1.4 is available in the `mimic` database under the `mimiciii` schema
 * The standard concepts from Athena have been downloaded and are available somewhere (including running the extra script to download CPT code definitions)
 * The R software library with remotes (`install.packages("remotes")`) and a GitHub package `remotes::install_github("r-dbi/RPostgres")`. Additionally, R and Rtools should be in the PATH environment variable (e.g., "C:\Program Files\R\R-4.2.2\bin" and "C:\rtools43\usr\bin").
+```bash
+Rscript install.packages("remotes")
+Rscript remotes::install_github("r-dbi/RPostgres")
+```
 * The computer has an active internet connection (needed to clone certain repositories throughout the build)
 * Postgresql bin and lib should be in the PATH environment variable (e.g., "C:\Program Files\PostgreSQL\15\lib" and "C:\Program Files\PostgreSQL\15\bin").
 * Git should be installed and available in the PATH environment variable
 
-## 0. Open up a terminal and define parameters
-
-To simplify the reusability of these scripts, we define a few environment variables and reuse them throughout the rest of the guide.
-
-First is the connection string used to connect to the database. Note this also specifies the schema using `search_path`.
-
-```bash
-export OMOP_SCHEMA='omop'
-export OMOP='host=localhost dbname=postgres user=postgres options=--search_path='$OMOP_SCHEMA
-export MIMIC='host=localhost dbname=postgres user=postgres options=--search_path=mimiciii'
-# or, e.g., export OMOP="dbname=mimic options=--search_path=omop"
-```
-
-We will later use these environmental variables to connect to postgres.
-
-**NOTE**: While ideally specifying the schemas would be completely configurable, much of the repository assumes the `omop` schema. The `mimiciii` schema should be configurable, but this is experimental.
+## 0. Open up a terminal and navigate to the mimic-omop-Windows directory
 
 ## 1. Build OMOP tables with standard concepts
 
@@ -34,10 +23,10 @@ See [the omop/build-omop/postgresql/README.md file](omop/build-omop/postgresql/R
 
 ## 2. Create local MIMIC-III concepts
 
-We need to create a `concept_id` for each MIMIC-III local code. OMOP reserves `concept_id` above 20,000,000+ for local codes, so we will use this range to insert ours.
+We need to create a `concept_id` for each MIMIC-III local code. OMOP reserves `concept_id` above 20,000,000+ for local codes, so we will use this range to insert ours. If your mimic schema ist different to 'mimiciii' you need to change the first line in the mimic/build-mimic/postgres_create_mimic_id.sql accordingly.
 
 ```sh
-psql "$MIMIC" -f mimic/build-mimic/postgres_create_mimic_id.sql
+psql -d mimic -U postgres -f mimic/build-mimic/postgres_create_mimic_id.sql
 ```
 
 N.B. this script is called by `etl_sequence.sql`
@@ -46,11 +35,13 @@ After this, every table in the MIMIC-III schema will have an additional column c
 
 ## 3. Load the concepts from the CSV files
 
-First prepare a configuration file for the R script and save it as `mimic-omop.cfg` in the root folder of this repository. Here is an example of the file structure:
+Edit the configuration file for the R script `mimic-omop.cfg` in the root folder of this repository. Here is an example of the file structure:
 
 ```sh
 dbname=mimic
-user=alistairewj
+user=postgres
+port=5432
+password=FILL HERE
 ```
 
 After that, run the R script from the root folder:
@@ -63,10 +54,10 @@ This will load various manual mappings to the database under the `mimiciii` sche
 
 ## 4. Run the ETL
 
-Be sure to run this from the *root* folder of the repository, or the relative path names will cause errors.
+Be sure to run this from the *root* folder of the repository, or the relative path names will cause errors. The script assumes mimic to be in the mimiciii schema, else change the "SET SEARCH_PATH TO mimiciii" line in the "etl/etl.sql".
 
 ```sh
-psql "$MIMIC" --set=OMOP_SCHEMA="$OMOP_SCHEMA" -f "etl/etl.sql"
+psql -d mimic -U postgres -f "etl/etl.sql"
 ```
 
 ## 5. Check the ETL has run properly
