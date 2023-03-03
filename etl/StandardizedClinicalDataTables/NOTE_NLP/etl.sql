@@ -14,16 +14,16 @@ select
 , now() as nlp_datetime
 , concept.concept_name as section_source_value
 , concept.concept_id as section_source_concept_id
-from :OMOP_SCHEMA.tmp_note_nlp
+from omop.tmp_note_nlp
 join noteevents using (row_id)
 left join gcpt_note_section_to_concept ON section_code = section_id -- the local section
-left join :OMOP_SCHEMA.concept 
+left join omop.concept
 	ON label_mapped = concept_name 
 	AND concept_code = 'MIMIC Generated' 
 	AND domain_id = 'Note Nlp' 
 WHERE iserror IS NULL
 )
-INSERT INTO :OMOP_SCHEMA.note_nlp
+INSERT INTO omop.note_nlp
 (
     note_nlp_id
   , note_id

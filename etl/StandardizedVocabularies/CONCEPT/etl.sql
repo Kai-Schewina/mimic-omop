@@ -1,11 +1,11 @@
-ALTER TABLE :OMOP_SCHEMA.concept DISABLE TRIGGER ALL;
-DELETE FROM :OMOP_SCHEMA.concept WHERE concept_id >= 200000000;
-DELETE FROM :OMOP_SCHEMA.concept_synonym WHERE concept_id >= 200000000;
-ALTER TABLE :OMOP_SCHEMA.concept ENABLE TRIGGER ALL;
+ALTER TABLE omop.concept DISABLE TRIGGER ALL;
+DELETE FROM omop.concept WHERE concept_id >= 200000000;
+DELETE FROM omop.concept_synonym WHERE concept_id >= 200000000;
+ALTER TABLE omop.concept ENABLE TRIGGER ALL;
 
 --MIMIC-OMOP
 --concept_
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id, concept_name, domain_id, vocabulary_id, concept_class_id, concept_code, valid_start_date, valid_end_date
 ) VALUES
   (2000000000,'Stroke Volume Variation','Measurement','','Clinical Observation','MIMIC Generated','1979-01-01','2099-01-01')
@@ -24,7 +24,7 @@ concept_id, concept_name, domain_id, vocabulary_id, concept_class_id, concept_co
 , (2000000013,'Unwkown Ward','Visit Detail','Visit Detail','Visit_detail','MIMIC Generated','1979-01-01','2099-01-01')
 ;
 
--- INSERT INTO :OMOP_SCHEMA.concept_relationship()
+-- INSERT INTO omop.concept_relationship()
 -- VALUES
 
 
@@ -33,7 +33,7 @@ concept_id, concept_name, domain_id, vocabulary_id, concept_class_id, concept_co
 
 
 --ITEMS
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -107,7 +107,7 @@ SELECT
 , '1979-01-01' as valid_start_date
 , '2099-01-01' as valid_end_date
 FROM d_items;
-INSERT INTO :OMOP_SCHEMA.concept_synonym
+INSERT INTO omop.concept_synonym
 (
   concept_id
 , concept_synonym_name
@@ -154,7 +154,7 @@ and abbreviation is not null;
 --	)
 
 --LABS
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -199,7 +199,7 @@ distinct on (concept_name)
 FROM tmp
 ),
 "insert_synonym" as  (
-INSERT INTO :OMOP_SCHEMA.concept_synonym
+INSERT INTO omop.concept_synonym
 (
   concept_id
 , concept_synonym_name
@@ -221,7 +221,7 @@ from row_to_insert
 WHERE drug_name_generic is distinct from drug
 and drug_name_generic is not null
 )
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -237,7 +237,7 @@ FROM row_to_insert;
 
 --d_icd_procedures
 
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -250,7 +250,7 @@ SELECT
 , '1979-01-01' as valid_start_date
 , '2099-01-01' as valid_end_date
 FROM d_icd_procedures;
-INSERT INTO :OMOP_SCHEMA.concept_synonym
+INSERT INTO omop.concept_synonym
 (
   concept_id
 , concept_synonym_name
@@ -266,7 +266,7 @@ and long_title IS NOT NULL;
 
 
 -- NOTE_NLP mapped sections
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -282,7 +282,7 @@ distinct on (label_mapped)
 FROM gcpt_note_section_to_concept;
 
 -- Derived values
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -290,14 +290,14 @@ SELECT
 , measurement_source_value as concept_name
 , 'Meas Value'::text as domain_id
 , 'MIMIC Generated' as vocabulary_id
-, 'Derived Value' as concept_class_id -- :OMOP_SCHEMA Lab Test
+, 'Derived Value' as concept_class_id -- omop Lab Test
 ,  itemid as concept_code
 , '1979-01-01' as valid_start_date
 , '2099-01-01' as valid_end_date
 FROM gcpt_derived_to_concept;
 
 --visit_occurrence_concept
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -312,7 +312,7 @@ SELECT
 FROM gcpt_admission_type_to_concept;
 
 --visit_occurrence_admitting
-INSERT INTO :OMOP_SCHEMA.concept (
+INSERT INTO omop.concept (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT
@@ -328,7 +328,7 @@ FROM gcpt_admission_location_to_concept;
 
 
 --visit_occurrence_discharge
-INSERT INTO :OMOP_SCHEMA.concept  (
+INSERT INTO omop.concept  (
 concept_id,concept_name,domain_id,vocabulary_id,concept_class_id,concept_code,valid_start_date,valid_end_date
 )
 SELECT

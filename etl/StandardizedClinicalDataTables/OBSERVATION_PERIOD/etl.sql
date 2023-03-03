@@ -12,9 +12,9 @@ SELECT
 , visit_end_date as observation_period_end_date
 , visit_end_datetime as observation_period_end_datetime
 , 44814724  as period_type_concept_id  --  Period covering healthcare encounters
-FROM :OMOP_SCHEMA.visit_occurrence
+FROM omop.visit_occurrence
 )
-INSERT INTO :OMOP_SCHEMA.observation_period
+INSERT INTO omop.observation_period
 (
     observation_period_id
   , person_id

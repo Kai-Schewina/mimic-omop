@@ -33,7 +33,7 @@
 --
  WHERE gcpt.observation_concept_id = 0
 )
-INSERT INTO :OMOP_SCHEMA.OBSERVATION
+INSERT INTO omop.OBSERVATION
 (
     observation_id
   , person_id
@@ -74,7 +74,7 @@ SELECT
 , unit_source_value
 , qualifier_source_value
 FROM row_to_insert
-LEFT JOIN :OMOP_SCHEMA.visit_detail_assign
+LEFT JOIN omop.visit_detail_assign
 ON row_to_insert.visit_occurrence_id = visit_detail_assign.visit_occurrence_id
 AND
 (--only one visit_detail
@@ -217,7 +217,7 @@ UNION ALL
     JOIN gcpt_ethnicity_to_concept as map USING (ethnicity)
     LEFT JOIN patients USING (subject_id)
   WHERE adm.ethnicity IS NOT NULL)
- INSERT INTO :OMOP_SCHEMA.OBSERVATION
+ INSERT INTO omop.OBSERVATION
 SELECT
           observation_id
         , person_id
@@ -278,7 +278,7 @@ SELECT
 	LEFT JOIN admissions USING (hadm_id)
 	LEFT JOIN gcpt_drgcode_to_concept USING (description)
 )
-INSERT INTO :OMOP_SCHEMA.observation
+INSERT INTO omop.observation
 SELECT
           observation_id
         , person_id
@@ -315,7 +315,7 @@ WITH
              , concept.concept_id as observation_source_concept_id
              , concept.concept_code as observation_source_value
           FROM chartevents
-	  JOIN :OMOP_SCHEMA.concept ON  -- concept driven dispatcher
+	  JOIN omop.concept ON  -- concept driven dispatcher
 		(           concept_code  = itemid::Text
 			AND domain_id     = 'Observation'
 			AND vocabulary_id = 'MIMIC d_items'
@@ -349,7 +349,7 @@ SELECT
         LEFT JOIN patients USING (subject_id)
         LEFT JOIN caregivers USING (cgid)
         LEFT JOIN admissions USING (hadm_id))
-INSERT INTO :OMOP_SCHEMA.observation
+INSERT INTO omop.observation
 SELECT
           observation_id
         , person_id
@@ -370,7 +370,7 @@ SELECT
         , unit_source_value
         , qualifier_source_value
 FROM row_to_insert
-LEFT JOIN :OMOP_SCHEMA.visit_detail_assign
+LEFT JOIN omop.visit_detail_assign
 ON row_to_insert.visit_occurrence_id = visit_detail_assign.visit_occurrence_id
 AND
 (--only one visit_detail

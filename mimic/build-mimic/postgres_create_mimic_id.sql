@@ -11,6 +11,7 @@
 --  from pg_tables
 --  where schemaname like 'mimic' )
 --  ORDER BY table_name) as tables;
+SET SEARCH_PATH TO mimiciii;
 
  ALTER TABLE admissions drop column IF EXISTS mimic_id;
  ALTER TABLE callout drop column IF EXISTS mimic_id;

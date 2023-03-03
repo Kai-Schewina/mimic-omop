@@ -2,26 +2,27 @@
 \set ON_ERROR_STOP true
 \timing
 
-TRUNCATE TABLE  :OMOP_SCHEMA.care_site CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.cohort_definition CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.cohort_attribute CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.attribute_definition CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.person CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.death CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.visit_occurrence CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.observation_period CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.visit_detail CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.procedure_occurrence CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.provider CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.condition_occurrence CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.observation CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.drug_exposure CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.measurement CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.specimen CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.note CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.note_nlp CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.fact_relationship CASCADE;
-TRUNCATE TABLE  :OMOP_SCHEMA.dose_era CASCADE;
+SET SEARCH_PATH TO mimiciii;
+TRUNCATE TABLE  omop.care_site CASCADE;
+TRUNCATE TABLE  omop.cohort_definition CASCADE;
+TRUNCATE TABLE  omop.cohort_attribute CASCADE;
+TRUNCATE TABLE  omop.attribute_definition CASCADE;
+TRUNCATE TABLE  omop.person CASCADE;
+TRUNCATE TABLE  omop.death CASCADE;
+TRUNCATE TABLE  omop.visit_occurrence CASCADE;
+TRUNCATE TABLE  omop.observation_period CASCADE;
+TRUNCATE TABLE  omop.visit_detail CASCADE;
+TRUNCATE TABLE  omop.procedure_occurrence CASCADE;
+TRUNCATE TABLE  omop.provider CASCADE;
+TRUNCATE TABLE  omop.condition_occurrence CASCADE;
+TRUNCATE TABLE  omop.observation CASCADE;
+TRUNCATE TABLE  omop.drug_exposure CASCADE;
+TRUNCATE TABLE  omop.measurement CASCADE;
+TRUNCATE TABLE  omop.specimen CASCADE;
+TRUNCATE TABLE  omop.note CASCADE;
+TRUNCATE TABLE  omop.note_nlp CASCADE;
+TRUNCATE TABLE  omop.fact_relationship CASCADE;
+TRUNCATE TABLE  omop.dose_era CASCADE;
 
 
 --\i omop/build-omop/postgresql/mimic-omop-disable-trigger.sql
